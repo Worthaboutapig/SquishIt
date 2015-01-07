@@ -301,75 +301,77 @@ namespace SquishIt.Framework.Base
         string RenderRelease(string key, string renderTo, IRenderer renderer)
         {
             string content;
-            if (!TryGetCachedBundle(key, out content))
-            {
-                using (new CriticalRenderingSection(renderTo))
-                {
-                    if (!TryGetCachedBundle(key, out content))
-                    {
-                        var uniqueFiles = new List<string>();
-                        string hash = null;
+	        if (TryGetCachedBundle(key, out content))
+	        {
+		        return content;
+	        }
 
-                        bundleState.DependentFiles.Clear();
+	        using (new CriticalRenderingSection(renderTo))
+	        {
+		        if (!TryGetCachedBundle(key, out content))
+		        {
+			        var uniqueFiles = new List<string>();
+			        string hash = null;
 
-                        if (renderTo == null)
-                        {
-                            renderTo = renderPathCache[CachePrefix + "." + key];
-                        }
-                        else
-                        {
-                            renderPathCache[CachePrefix + "." + key] = renderTo;
-                        }
+			        bundleState.DependentFiles.Clear();
 
-                        var outputFile = pathTranslator.ResolveAppRelativePathToFileSystem(renderTo);
-                        var renderToPath = ExpandAppRelativePath(renderTo);
+			        if (renderTo == null)
+			        {
+				        renderTo = renderPathCache[CachePrefix + "." + key];
+			        }
+			        else
+			        {
+				        renderPathCache[CachePrefix + "." + key] = renderTo;
+			        }
 
-                        if (!String.IsNullOrEmpty(BaseOutputHref))
-                        {
-                            renderToPath = String.Concat(BaseOutputHref.TrimEnd('/'), "/", renderToPath.TrimStart('/'));
-                        }
+			        var outputFile = pathTranslator.ResolveAppRelativePathToFileSystem(renderTo);
+			        var renderToPath = ExpandAppRelativePath(renderTo);
 
-                        var remoteAssetPaths = new List<string>();
-                        remoteAssetPaths.AddRange(bundleState.Assets.Where(a => a.IsRemote).Select(a => a.RemotePath));
+			        if (!String.IsNullOrEmpty(BaseOutputHref))
+			        {
+				        renderToPath = String.Concat(BaseOutputHref.TrimEnd('/'), "/", renderToPath.TrimStart('/'));
+			        }
 
-                        uniqueFiles.AddRange(GetFiles(bundleState.Assets.Where(asset =>
-                            asset.IsEmbeddedResource ||
-                            asset.IsLocal ||
-                            asset.IsRemoteDownload).ToList()).Distinct());
+			        var remoteAssetPaths = new List<string>();
+			        remoteAssetPaths.AddRange(bundleState.Assets.Where(a => a.IsRemote).Select(a => a.RemotePath));
 
-                        var renderedTag = string.Empty;
-                        if (uniqueFiles.Count > 0 || bundleState.Assets.Count(a => a.IsArbitrary) > 0)
-                        {
-                            bundleState.DependentFiles.AddRange(uniqueFiles);
+			        uniqueFiles.AddRange(GetFiles(bundleState.Assets.Where(asset =>
+																			asset.IsEmbeddedResource ||
+																			asset.IsLocal ||
+																			asset.IsRemoteDownload).ToList()).Distinct());
 
-                            var minifiedContent = GetMinifiedContent(bundleState.Assets, outputFile);
-                            if (!string.IsNullOrEmpty(bundleState.HashKeyName))
-                            {
-                                hash = hasher.GetHash(minifiedContent);
-                            }
+			        var renderedTag = string.Empty;
+			        if (uniqueFiles.Count > 0 || bundleState.Assets.Count(a => a.IsArbitrary) > 0)
+			        {
+				        bundleState.DependentFiles.AddRange(uniqueFiles);
 
-                            renderToPath = bundleState.CacheInvalidationStrategy.GetOutputWebPath(renderToPath, bundleState.HashKeyName, hash);
-                            outputFile = bundleState.CacheInvalidationStrategy.GetOutputFileLocation(outputFile, hash);
+				        var minifiedContent = GetMinifiedContent(bundleState.Assets, outputFile);
+				        if (!string.IsNullOrEmpty(bundleState.HashKeyName))
+				        {
+					        hash = hasher.GetHash(minifiedContent);
+				        }
 
-                            if (!(bundleState.ShouldRenderOnlyIfOutputFileIsMissing && FileExists(outputFile)))
-                            {
-                                renderer.Render(minifiedContent, outputFile);
-                            }
+				        renderToPath = bundleState.CacheInvalidationStrategy.GetOutputWebPath(renderToPath, bundleState.HashKeyName, hash);
+				        outputFile = bundleState.CacheInvalidationStrategy.GetOutputFileLocation(outputFile, hash);
 
-                            renderedTag = FillTemplate(bundleState, renderToPath);
-                        }
+				        if (!(bundleState.ShouldRenderOnlyIfOutputFileIsMissing && FileExists(outputFile)))
+				        {
+					        renderer.Render(minifiedContent, outputFile);
+				        }
 
-                        content += String.Concat(GetFilesForRemote(remoteAssetPaths, bundleState), renderedTag);
-                    }
-                }
-                //don't cache bundles where debugging was forced via predicate
-                if (!bundleState.DebugPredicate.SafeExecute())
-                {
-                    bundleCache.Add(key, content, bundleState.DependentFiles, IsDebuggingEnabled());
-                }
-            }
+				        renderedTag = FillTemplate(bundleState, renderToPath);
+			        }
 
-            return content;
+			        content += String.Concat(GetFilesForRemote(remoteAssetPaths, bundleState), renderedTag);
+		        }
+	        }
+	        //don't cache bundles where debugging was forced via predicate
+	        if (!bundleState.DebugPredicate.SafeExecute())
+	        {
+		        bundleCache.Add(key, content, bundleState.DependentFiles, IsDebuggingEnabled());
+	        }
+
+	        return content;
         }
 
         protected string GetMinifiedContent(List<Asset> assets, string outputFile)
