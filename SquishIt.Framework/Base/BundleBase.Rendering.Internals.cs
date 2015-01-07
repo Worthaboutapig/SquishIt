@@ -310,7 +310,6 @@ namespace SquishIt.Framework.Base
 	        {
 		        if (!TryGetCachedBundle(key, out content))
 		        {
-			        var uniqueFiles = new List<string>();
 
 			        bundleState.DependentFiles.Clear();
 
@@ -331,14 +330,13 @@ namespace SquishIt.Framework.Base
 				        renderToPath = String.Concat(BaseOutputHref.TrimEnd('/'), "/", renderToPath.TrimStart('/'));
 			        }
 
-			        var remoteAssetPaths = new List<string>();
-			        remoteAssetPaths.AddRange(bundleState.Assets.Where(a => a.IsRemote).Select(a => a.RemotePath));
+					var remoteAssetPaths = new List<string>(bundleState.Assets.Where(a => a.IsRemote).Select(a => a.RemotePath));
 
-			        uniqueFiles.AddRange(GetFiles(bundleState.Assets.Where(asset =>
-																			asset.IsEmbeddedResource ||
-																			asset.IsLocal ||
-																			asset.IsRemoteDownload).ToList()).Distinct());
-
+			        var uniqueFiles = GetFiles(bundleState.Assets.Where(asset =>
+																asset.IsEmbeddedResource ||
+																asset.IsLocal ||
+																asset.IsRemoteDownload).ToList()).Distinct().ToList();
+					
 			        var renderedTag = string.Empty;
 			        if (uniqueFiles.Count > 0 || bundleState.Assets.Count(a => a.IsArbitrary) > 0)
 			        {
