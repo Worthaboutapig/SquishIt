@@ -30,17 +30,17 @@ namespace SquishIt.Framework
 
         public string ResolveFileSystemPathToAppRelative(string file)
         {
-            if (HttpContext.Current != null)
+	        Uri root;
+            
+			if (HttpContext.Current == null)
             {
-                var root = new Uri(HttpRuntime.AppDomainAppPath);
-                return root.MakeRelativeUri(new Uri(file, UriKind.RelativeOrAbsolute)).ToString();
-            }
-            else
-            {
-                var root = new Uri(Environment.CurrentDirectory);
-                var path = root.MakeRelativeUri(new Uri(file, UriKind.RelativeOrAbsolute)).ToString();
-                return path.Substring(path.IndexOf("/", StringComparison.InvariantCulture) + 1);
-            }
+				root = new Uri(Environment.CurrentDirectory);
+				var path = root.MakeRelativeUri(new Uri(file, UriKind.RelativeOrAbsolute)).ToString();
+				return path.Substring(path.IndexOf("/", StringComparison.InvariantCulture) + 1);
+			}
+	        
+			root = new Uri(HttpRuntime.AppDomainAppPath);
+	        return root.MakeRelativeUri(new Uri(file, UriKind.RelativeOrAbsolute)).ToString();
         }
     }
 }
