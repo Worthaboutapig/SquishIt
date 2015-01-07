@@ -311,7 +311,6 @@ namespace SquishIt.Framework.Base
 		        if (!TryGetCachedBundle(key, out content))
 		        {
 			        var uniqueFiles = new List<string>();
-			        string hash = null;
 
 			        bundleState.DependentFiles.Clear();
 
@@ -346,7 +345,8 @@ namespace SquishIt.Framework.Base
 				        bundleState.DependentFiles.AddRange(uniqueFiles);
 
 				        var minifiedContent = GetMinifiedContent(bundleState.Assets, outputFile);
-				        if (!string.IsNullOrEmpty(bundleState.HashKeyName))
+						string hash = null;
+						if (!string.IsNullOrEmpty(bundleState.HashKeyName))
 				        {
 					        hash = hasher.GetHash(minifiedContent);
 				        }
@@ -365,6 +365,7 @@ namespace SquishIt.Framework.Base
 			        content += String.Concat(GetFilesForRemote(remoteAssetPaths, bundleState), renderedTag);
 		        }
 	        }
+
 	        //don't cache bundles where debugging was forced via predicate
 	        if (!bundleState.DebugPredicate.SafeExecute())
 	        {
