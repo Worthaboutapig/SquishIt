@@ -322,14 +322,6 @@ namespace SquishIt.Framework.Base
 				        renderPathCache[CachePrefix + "." + key] = renderTo;
 			        }
 
-			        var outputFile = pathTranslator.ResolveAppRelativePathToFileSystem(renderTo);
-			        var renderToPath = ExpandAppRelativePath(renderTo);
-
-			        if (!String.IsNullOrEmpty(BaseOutputHref))
-			        {
-				        renderToPath = String.Concat(BaseOutputHref.TrimEnd('/'), "/", renderToPath.TrimStart('/'));
-			        }
-
 					var remoteAssetPaths = new List<string>(bundleState.Assets.Where(a => a.IsRemote).Select(a => a.RemotePath));
 
 			        var uniqueFiles = GetFiles(bundleState.Assets.Where(asset =>
@@ -342,14 +334,22 @@ namespace SquishIt.Framework.Base
 			        {
 				        bundleState.DependentFiles.AddRange(uniqueFiles);
 
-				        var minifiedContent = GetMinifiedContent(bundleState.Assets, outputFile);
+						var outputFile = pathTranslator.ResolveAppRelativePathToFileSystem(renderTo);
+						var minifiedContent = GetMinifiedContent(bundleState.Assets, outputFile);
 						string hash = null;
 						if (!string.IsNullOrEmpty(bundleState.HashKeyName))
 				        {
 					        hash = hasher.GetHash(minifiedContent);
 				        }
 
-				        renderToPath = bundleState.CacheInvalidationStrategy.GetOutputWebPath(renderToPath, bundleState.HashKeyName, hash);
+						var renderToPath = ExpandAppRelativePath(renderTo);
+
+						if (!String.IsNullOrEmpty(BaseOutputHref))
+						{
+							renderToPath = String.Concat(BaseOutputHref.TrimEnd('/'), "/", renderToPath.TrimStart('/'));
+						}
+
+						renderToPath = bundleState.CacheInvalidationStrategy.GetOutputWebPath(renderToPath, bundleState.HashKeyName, hash);
 				        outputFile = bundleState.CacheInvalidationStrategy.GetOutputFileLocation(outputFile, hash);
 
 				        if (!(bundleState.ShouldRenderOnlyIfOutputFileIsMissing && FileExists(outputFile)))
