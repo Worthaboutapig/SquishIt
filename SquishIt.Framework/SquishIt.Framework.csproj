@@ -86,6 +86,7 @@
     <Compile Include="Configuration.cs" />
     <Compile Include="Caches\ContentCache.cs" />
     <Compile Include="CSS\RelativePathAdapter.cs" />
+    <Compile Include="HttpRuntime.cs" />
     <Compile Include="HttpContext.cs" />
     <Compile Include="Invalidation\DefaultCacheInvalidationStrategy.cs" />
     <Compile Include="Invalidation\HashAsVirtualDirectoryCacheInvalidationStrategy.cs" />

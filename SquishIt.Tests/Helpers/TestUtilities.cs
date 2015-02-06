@@ -23,11 +23,18 @@ namespace SquishIt.Tests.Helpers
 
         public static string PrepareRelativePath(string path)
         {
-            var directorySeparator = Path.DirectorySeparatorChar.ToString();
-            return Environment.CurrentDirectory + (path.StartsWith(directorySeparator) ? "" : directorySeparator) + PreparePath(path);
+	        return PrepareRelativePath(path, Environment.CurrentDirectory);
         }
 
-        public static string NormalizeLineEndings(string contents)
+		public static string PrepareRelativePath(string path, string rootDirectory)
+		{
+			var directorySeparator = Path.DirectorySeparatorChar.ToString();
+			var relativePath = rootDirectory + (path.StartsWith(directorySeparator) ? "" : directorySeparator) + PreparePath(path);
+			return relativePath;
+		}
+
+		
+		public static string NormalizeLineEndings(string contents)
         {
             //hash is calculated differently w/ different newline characters
             //normalize windows -> unix bc it's easier
