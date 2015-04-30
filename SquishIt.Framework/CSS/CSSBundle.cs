@@ -85,8 +85,7 @@ namespace SquishIt.Framework.CSS
             return IMPORT_PATTERN.Replace(css, match =>
             {
                 var importPath = match.Groups[2].Value;
-                string import;
-                import = importPath.StartsWith("/")
+                var import = importPath.StartsWith("/")
                     ? pathTranslator.ResolveAppRelativePathToFileSystem(importPath)
                     : pathTranslator.ResolveAppRelativePathToFileSystem(sourcePath + importPath);
                 bundleState.DependentFiles.Add(import);

@@ -128,10 +128,12 @@ namespace SquishIt.Framework.Base
         {
             if (file.StartsWith("~/"))
             {
-                string appRelativePath = HttpRuntime.AppDomainAppVirtualPath;
-                if (appRelativePath != null && !appRelativePath.EndsWith("/"))
-                    appRelativePath += "/";
-                return file.Replace("~/", appRelativePath);
+                var appRelativePath = HttpRuntime.AppDomainAppVirtualPath;
+	            if (appRelativePath != null && !appRelativePath.EndsWith("/"))
+	            {
+					appRelativePath += "/";
+	            }
+	            return file.Replace("~/", appRelativePath);
             }
             return file;
         }
@@ -189,11 +191,13 @@ namespace SquishIt.Framework.Base
 
         string Render(string renderTo, string key, IRenderer renderer)
         {
-            var cacheUniquenessHash = key.Contains("#") ? hasher.GetHash(bundleState.Assets
-                                               .Select(a => a.IsRemote ? a.RemotePath :
-                                                   a.IsArbitrary ? a.Content : a.LocalPath)
-                                               .OrderBy(s => s)
-                                               .Aggregate(string.Empty, (acc, val) => acc + val)) : string.Empty;
+	        var path = Path.GetFileName(key);
+	        var cacheUniquenessHash = path.Contains("#")
+		        ? hasher.GetHash(bundleState.Assets
+			        .Select(a => a.IsRemote ? a.RemotePath : a.IsArbitrary ? a.Content : a.LocalPath)
+			        .OrderBy(s => s)
+			        .Aggregate(string.Empty, (acc, val) => acc + val))
+		        : string.Empty;
 
             key = CachePrefix + key + cacheUniquenessHash;
 
@@ -310,7 +314,6 @@ namespace SquishIt.Framework.Base
 	        {
 		        if (!TryGetCachedBundle(key, out content))
 		        {
-
 			        bundleState.DependentFiles.Clear();
 
 			        if (renderTo == null)
@@ -350,7 +353,8 @@ namespace SquishIt.Framework.Base
 						}
 
 						renderToPath = bundleState.CacheInvalidationStrategy.GetOutputWebPath(renderToPath, bundleState.HashKeyName, hash);
-				        outputFile = bundleState.CacheInvalidationStrategy.GetOutputFileLocation(outputFile, hash);
+						var outputFileLocation = bundleState.CacheInvalidationStrategy.GetOutputFileLocation(renderTo, hash);
+				        outputFile = pathTranslator.ResolveAppRelativePathToFileSystem(outputFileLocation);
 
 				        if (!(bundleState.ShouldRenderOnlyIfOutputFileIsMissing && FileExists(outputFile)))
 				        {

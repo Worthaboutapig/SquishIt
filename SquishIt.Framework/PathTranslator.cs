@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Web;
 
 namespace SquishIt.Framework
 {
@@ -8,18 +7,21 @@ namespace SquishIt.Framework
     {
         public string ResolveAppRelativePathToFileSystem(string file)
         {
-            // Remove query string
+	        // Remove query string
             if (file.IndexOf('?') != -1)
             {
                 file = file.Substring(0, file.IndexOf('?'));
             }
-            
-            return HttpContext.Current == null 
-                ? ProcessWithoutHttpContext(file) 
-                : HttpContext.Current.Server.MapPath(HttpRuntime.AppDomainAppVirtualPath + "/" + file.TrimStart("~/").TrimStart("~"));
+
+	        if (HttpContext.Current == null)
+	        {
+		        return ProcessWithoutHttpContext(file);
+	        }
+
+	        return HttpContext.Current.Server.MapPath(HttpRuntime.AppDomainAppVirtualPath + "/" + file.TrimStart("~/").TrimStart("~"));
         }
 
-        static string ProcessWithoutHttpContext(string file)
+	    static string ProcessWithoutHttpContext(string file)
         {
             file = Platform.Unix 
                 ? file.TrimStart('~', '/') // does this need to stay this way to account for multiple leading slashes or can string trimstart be used?
@@ -40,7 +42,7 @@ namespace SquishIt.Framework
 			}
 	        
 			root = new Uri(HttpRuntime.AppDomainAppPath);
-	        return root.MakeRelativeUri(new Uri(file, UriKind.RelativeOrAbsolute)).ToString();
+			return root.MakeRelativeUri(new Uri(file, UriKind.RelativeOrAbsolute)).ToString();
         }
     }
 }

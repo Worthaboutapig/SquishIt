@@ -19,7 +19,11 @@ using HttpContext = SquishIt.Framework.HttpContext;
 
 namespace SquishIt.Tests
 {
-    [TestFixture]
+	using System.Diagnostics;
+	using System.Web.Caching;
+	using IronRuby.Builtins;
+
+	[TestFixture]
     public class JavaScriptBundleTests
     {
         string javaScript = TestUtilities.NormalizeLineEndings(@"
@@ -58,7 +62,45 @@ namespace SquishIt.Tests
             javaScriptBundleFactory.Create().Render("~/js/output_#.js");
         }
 
-        [Test]
+		[Test]
+		public void CanRenderEmptyBundle_WithHashInPhysicalPath()
+		{
+			var physicalPath = Directory.CreateDirectory(Path.Combine(Environment.CurrentDirectory, "c#"));
+
+			var renderer = new Mock<IRenderer>();
+			renderer.Setup(r => r.Render(It.IsAny<string>(), It.IsAny<string>())).Callback(() => { });
+			var configuration = new Configuration()
+				//.UseDefaultOutputBaseHref("http://localhost/")
+				.UsePathTranslator(new PathTranslator());
+			var trustLevel = new Mock<ITrustLevel>();
+			trustLevel.SetupGet(tl => tl.CurrentTrustLevel).Returns(AspNetHostingPermissionLevel.Unrestricted); //globally configured hasher is used another 2 times in high / full trust when obtaining mutex
+
+			var httpContext = new Mock<HttpContextBase>();
+			httpContext.Setup(hcb => hcb.Server.MapPath(It.IsAny<string>())).Returns<string>(file => Path.Combine(physicalPath.FullName, file.TrimStart('/')));
+			string tag;
+
+			javaScriptBundleFactory.FileReaderFactory.SetFileExists(true);
+
+			using (new ConfigurationScope(configuration))
+			using (new TrustLevelScope(trustLevel.Object))
+			using (new HttpContextScope(httpContext.Object))
+			using (new HttpRuntimeScope(physicalPath.FullName, null, new Cache()))
+			{
+				FilePathMutexProvider.instance = null;
+
+				var j = javaScriptBundleFactory
+					.WithDebuggingEnabled(false)
+					.Create()
+					.Add("~/js/test.js");
+
+				tag = j.Render("~/js/output_#.js");
+				
+				Assert.AreEqual("<script type=\"text/javascript\" src=\"js/output_hash.js\"></script>", tag);
+				Assert.AreEqual(minifiedJavaScript, javaScriptBundleFactory.FileWriterFactory.Files[TestUtilities.PrepareRelativePath(@"js\output_hash.js", physicalPath.FullName)]);
+			}
+		}
+
+		[Test]
         public void CanBundleJavaScript()
         {
             var tag = javaScriptBundleFactory

@@ -7,7 +7,9 @@ using SquishIt.Framework.JavaScript;
 
 namespace SquishIt.Framework
 {
-    /// <summary>
+	using Utilities;
+
+	/// <summary>
     /// This is the entry point for the majority of interaction with the SquishIt API.
     /// </summary>
     public class Bundle
@@ -134,7 +136,7 @@ namespace SquishIt.Framework
         /// </summary>
         /// <param name="debugStatusReader"><see cref="IDebugStatusReader">IDebugStatusReader</see> instance to use.</param>
         /// <returns><see cref="JavaScriptBundle">JavaScriptBundle</see></returns>
-        public static JavaScriptBundle JavaScript(Utilities.IDebugStatusReader debugStatusReader)
+        public static JavaScriptBundle JavaScript(IDebugStatusReader debugStatusReader)
         {
             return new JavaScriptBundle(debugStatusReader);
         }
@@ -153,7 +155,7 @@ namespace SquishIt.Framework
         /// </summary>
         /// <param name="debugStatusReader"><see cref="IDebugStatusReader">IDebugStatusReader</see> instance to use.</param>
         /// <returns><see cref="CSSBundle">CSSBundle</see></returns>
-        public static CSSBundle Css(Utilities.IDebugStatusReader debugStatusReader)
+        public static CSSBundle Css(IDebugStatusReader debugStatusReader)
         {
             return new CSSBundle(debugStatusReader);
         }
