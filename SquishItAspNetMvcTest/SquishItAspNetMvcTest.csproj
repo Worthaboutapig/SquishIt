@@ -49,38 +49,37 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.Helpers, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.1.0.20105.408\lib\net40\System.Web.Helpers.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\AspNetMvc.3.0.20105.0\lib\net40\System.Web.Mvc.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Razor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.AspNet.Razor.1.0.20105.408\lib\net40\System.Web.Razor.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
-    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Helpers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=4.0.0.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.4.0.40804.0\lib\net40\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.2.0.20710.0\lib\net40\System.Web.Razor.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.Routing" />
-    <Reference Include="System.Web.WebPages, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="System.Web.WebPages, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.1.0.20105.408\lib\net40\System.Web.WebPages.dll</HintPath>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.WebPages.Deployment, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="System.Web.WebPages.Deployment, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.1.0.20105.408\lib\net40\System.Web.WebPages.Deployment.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.WebPages.Razor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="System.Web.WebPages.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.1.0.20105.408\lib\net40\System.Web.WebPages.Razor.dll</HintPath>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\AssetHashingController.cs" />
     <Compile Include="Controllers\AutoBundlingController.cs" />
     <Compile Include="Controllers\DebuggingBehaviorController.cs" />
     <Compile Include="Controllers\FeaturesController.cs" />
@@ -95,6 +94,8 @@
     <Content Include="assets\js\minifyjs_test.js" />
     <None Include="assets\styles\dynamic_import_test1.less" />
     <None Include="assets\styles\import_subfolder\dynamic_import_test2.less" />
+    <Content Include="assets\styles\backgroundimage-local-relative.css" />
+    <Content Include="assets\styles\backgroundimage-root-relative.css" />
     <Content Include="assets\styles\processedimport_test1.css" />
     <Content Include="assets\styles\folder_test\folder_test1.css" />
     <Content Include="assets\styles\folder_test\subfolder\folder_test2.css" />
@@ -104,15 +105,18 @@
     <Content Include="assets\styles\lesstest.less.css" />
     <Content Include="assets\styles\minifycss_test2.css" />
     <Content Include="assets\styles\minifycss_test1.css" />
-    <None Include="assets\styles\nsasstest.scss" />
-    <None Include="assets\styles\sasstest.scss" />
-    <None Include="assets\styles\sasstest.sass" />
+    <None Include="assets\styles\sass-import\_sasstest.sass" />
+    <None Include="assets\styles\sass-import\_sasstest.scss" />
+    <None Include="assets\styles\sass\nsasstest.scss" />
+    <None Include="assets\styles\sass\sasstest.scss" />
+    <None Include="assets\styles\sass\sasstest.sass" />
     <EmbeddedResource Include="EmbeddedResource\Embedded.css" />
     <EmbeddedResource Include="EmbeddedResource\Embedded.js" />
     <Content Include="assets\templates\hogan\template2.hogan.html" />
     <Content Include="assets\templates\hogan\lambda.hogan.html" />
     <Content Include="assets\styles\Common\Css\Site.css" />
     <Content Include="assets\styles\import-font.css" />
+    <EmbeddedResource Include="EmbeddedResource\Embedded.less.css" />
     <Content Include="Global.asax" />
     <Content Include="assets\js\hogan\hogan-2.0.0.js" />
     <Content Include="assets\js\jquery_1.7.2.js" />
@@ -154,6 +158,10 @@
     <Content Include="Views\Preprocessors\NSass.cshtml" />
     <None Include="assets\styles\Common\Fonts\pts55f-webfont.eot" />
     <None Include="assets\styles\Common\Fonts\pts55f-webfont.woff" />
+    <Content Include="Views\AssetHashing\LocalRelative.cshtml" />
+    <Content Include="Views\AssetHashing\RootRelative.cshtml" />
+    <Content Include="Views\Features\MinifyCssYUI.cshtml" />
+    <Content Include="Views\Features\MinifyJsYUI.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Preprocessors\Hogan.cshtml" />
@@ -206,6 +214,7 @@
     <Content Include="Views\Preprocessors\Sass.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="assets\img\" />
     <Folder Include="output\" />
   </ItemGroup>
   <PropertyGroup>
