@@ -148,13 +148,15 @@ namespace SquishIt.Framework.Base
 
         string Render(string renderTo, string key, IRenderer renderer)
         {
-            var cacheUniquenessHash = key.Contains("#") ? hasher.GetHash(bundleState.Assets
-                                               .Select(a => a.IsRemote ? a.RemotePath :
-                                                   a.IsArbitrary ? a.Content : a.LocalPath)
-                                               .OrderBy(s => s)
-                                               .Aggregate(string.Empty, (acc, val) => acc + val)) : string.Empty;
-
-            key = CachePrefix + key + cacheUniquenessHash;
+			var path = Path.GetFileName(key);
+			var cacheUniquenessHash = path.Contains("#")
+				? hasher.GetHash(bundleState.Assets
+					.Select(a => a.IsRemote ? a.RemotePath : a.IsArbitrary ? a.Content : a.LocalPath)
+					.OrderBy(s => s)
+					.Aggregate(string.Empty, (acc, val) => acc + val))
+				: string.Empty;
+			
+			key = CachePrefix + key + cacheUniquenessHash;
 
             if (!String.IsNullOrEmpty(BaseOutputHref))
             {
